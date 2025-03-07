@@ -4,3 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+
+[[bin]]
+name = "app"  # Custom binary name
+path = "src/main.rs"  # Optional, the path to the main source file (default is src/main.rs)
