@@ -1,9 +1,9 @@
-# Flask Fullstack project template
+# Rust Fullstack project template
 Fullstack project template
 
 ## Stack
 - Frontend: React
-- Backend: Python-Flask, SQLAlchemy
+- Backend: Rust with Actix-Web framework
 - Cache: Redis
 - DB: Postgres
 - Local development: Docker-compose
