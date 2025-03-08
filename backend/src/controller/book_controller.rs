@@ -1,20 +1,29 @@
-pub trait Controller {
-    pub fn list_all_books(&self);
-    pub fn get_book_by_id(&self);
-    pub fn delete_book_by_id(&self);
-    pub fn update_book_by_id(&self);
-    pub fn create_book(&self);
-}
-pub struct BookController{
-    
-}
+//use crate::service::book_service::BookService;
 
+/*
+pub trait Controller {
+     fn list_all_books(&self);
+     fn get_book_by_id(&self);
+     fn delete_book_by_id(&self);
+     fn update_book_by_id(&self);
+     fn create_book(&self);
+}
 impl BookController{
     pub fn new() -> Self{
 
     }
 }
 
-impl Controller for BookController{
+
+*/
+
+
+pub struct BookController{
     
+}
+
+impl BookController{
+    pub fn new() -> Self{
+        BookController{}
+    }
 }
