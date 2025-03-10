@@ -17,13 +17,15 @@ impl BookController{
 
 */
 
+use crate::service::book_service::BookService;
+
 
 pub struct BookController{
-    
+    _service: BookService
 }
 
 impl BookController{
-    pub fn new() -> Self{
-        BookController{}
+    pub fn new(service: BookService) -> Self{
+        BookController{_service: service}
     }
 }

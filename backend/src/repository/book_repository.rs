@@ -19,13 +19,15 @@ impl Repository for BookRepository{
 }
 */
 
-pub struct BookRepository{
+use diesel::PgConnection;
+use diesel::r2d2::{ConnectionManager,Pool};
 
-    
+pub struct BookRepository{
+    _pool: Pool<ConnectionManager<PgConnection>>, // The pool manages lifetime for us
 }
 
 impl BookRepository{
-    pub fn new() -> Self{
-        BookRepository{}
+    pub fn new(  pool: Pool<ConnectionManager<PgConnection>>    ) -> Self{
+        BookRepository{_pool: pool}
     }
 }
