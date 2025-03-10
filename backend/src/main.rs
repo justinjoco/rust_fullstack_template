@@ -13,6 +13,7 @@ use actix_web::{web, App, HttpServer, HttpResponse, Responder};
 use env_logger;
 
 async fn health_check() -> impl Responder{
+    info!("Health check ping");
     HttpResponse::Ok()
 }
 
@@ -27,7 +28,6 @@ async fn main() -> Result<(), std::io::Error> {
         let book_repository = BookRepository::new(pool);
         let book_service = BookService::new(book_repository);
         let _book_controller = BookController::new(book_service);
-        info!("Starting server");
         // Start the Actix Web server
         HttpServer::new(|| {
             App::new()

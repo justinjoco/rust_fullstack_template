@@ -1,4 +1,4 @@
-FROM rust:1.85.0-bullseye as builder
+FROM rust:1.85.0-slim-bullseye as builder
 
 # Set the working directory
 WORKDIR /usr/src/app
@@ -11,15 +11,18 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the cargo.toml and cargo.lock to the container to cache dependencies
-COPY . .
-
+COPY Cargo.toml Cargo.lock ./
+RUN mkdir src && echo "fn main() {}" > src/main.rs
 RUN cargo build --release
 
 # Now copy the actual source code
+COPY . .
+RUN cargo build --release
+
 
 # Build the application
 #RUN cargo build --release
-FROM debian:bullseye
+FROM debian:bullseye-slim
 
 RUN apt-get update && apt-get install -y \
     libssl1.1 \
