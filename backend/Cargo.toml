@@ -14,6 +14,7 @@ env_logger = "0.9"         # Logging support (optional, useful for logging)
 diesel = { version = "2.0", features = ["postgres", "r2d2"] }  # Diesel ORM for Postgres (optional)
 dotenv = "0.15"            # For loading environment variables from a `.env` file (optional)
 log = "0.4"
+redis = { version = "0.25", features = ["tokio-comp"] }
 
 [[bin]]
 name = "app"  # Custom binary name
