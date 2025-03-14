@@ -25,11 +25,13 @@ RUN cargo build --release
 FROM debian:bullseye-slim
 
 RUN apt-get update && apt-get install -y \
+    netcat \
     libssl1.1 \
     libpq5 \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 COPY --from=builder /usr/src/app/target/release/app  /bin/app
 
 ENV RUST_LOG=info
@@ -37,4 +39,5 @@ ENV RUST_LOG=info
 # Expose any ports if required (e.g., for web servers)
 EXPOSE 5000
 
-CMD ["/bin/app"]
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

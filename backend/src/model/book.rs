@@ -1,16 +1,19 @@
 use core::fmt;
 
+use sqlx::FromRow;
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};  // Utc for UTC times
 use uuid::Uuid;  // Import the Uuid type
-#[derive(Debug, Serialize, Deserialize)]
+use rust_decimal::Decimal;
+
+#[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct Book{
     pub id: Uuid,
     pub title: String,
     pub author: String,
     pub genre: String,
     pub description: Option<String>,
-    pub rating: Option<f64>,
+    pub rating: Option<Decimal>,
     pub date_published: Option<DateTime<Utc>>,
 }
 
@@ -21,7 +24,7 @@ pub struct CreateBookRequest{
     pub author: String,
     pub genre: String,
     pub description: Option<String>,
-    pub rating: Option<f64>,
+    pub rating: Option<Decimal>,
     pub date_published: Option<DateTime<Utc>>,
 }
 
@@ -32,7 +35,7 @@ pub struct UpdateBookRequest{
     pub author: Option<String>,
     pub genre: Option<String>,
     pub description: Option<String>,
-    pub rating: Option<f64>,
+    pub rating: Option<Decimal>,
     pub date_published: Option<DateTime<Utc>>,
 }
 

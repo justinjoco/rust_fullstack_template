@@ -3,8 +3,6 @@ name = "backend"
 version = "0.1.0"
 edition = "2024"
 
-
-
 [dependencies]
 actix-web = "4.0"          # Actix-web framework
 tokio = { version = "1", features = ["full"] }  # Async runtime (Actix-web needs an async runtime)
@@ -12,12 +10,14 @@ serde = { version = "1.0", features = ["derive"] }  # Serde for serialization (o
 serde_json = "1.0"         # JSON support for Serde (optional, often used in web apps)
 actix-rt = "2.5"           # Actix runtime for async tasks (optional, but needed for Actix async system)
 env_logger = "0.9"         # Logging support (optional, useful for logging)
-sqlx = { version = "0.6", features = ["postgres", "runtime-tokio-native-tls", "uuid", "chrono" ] }
+sqlx = { version = "0.8.3", features = ["postgres", "runtime-tokio-native-tls", "uuid", "chrono", "rust_decimal" ] }
 dotenv = "0.15"            # For loading environment variables from a `.env` file (optional)
 log = "0.4"
 redis = { version = "0.25", features = ["tokio-comp"] }
 chrono = { version = "0.4", features = ["serde"]}
 uuid = { version = "1.0", features = ["v4", "serde"] }
+rust_decimal = "1.25.0"
+actix-cors = "0.6"  # or the latest version
 
 [[bin]]
 name = "app"  # Custom binary name
