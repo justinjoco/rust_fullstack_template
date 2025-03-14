@@ -10,10 +10,11 @@ use controller::book_controller::BookController;
 use service::book_service::BookService;
 use repository::book_repository::BookRepository;
 use log::info;
-use actix_web::{web, App, HttpServer, HttpResponse, Responder};
+use actix_web::{ App, HttpServer, HttpResponse, Responder, get};
 use env_logger;
 use sqlx::PgPool;
 
+#[get("/health_check")]
 async fn health_check() -> impl Responder{
     info!("Health check ping");
     HttpResponse::Ok()
@@ -35,10 +36,7 @@ async fn main() -> Result<(), std::io::Error> {
         let book_service = BookService::new(book_repository);
         let _book_controller = BookController::new(book_service);
         // Start the Actix Web server
-        HttpServer::new(|| {
-            App::new()
-                .route("/health_check", web::get().to(health_check))
-        })
+        HttpServer::new(|| App::new().service(health_check))
         .bind("0.0.0.0:5000")?
         .run()
         .await
