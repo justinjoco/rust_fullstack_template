@@ -1,3 +1,5 @@
+use core::fmt;
+
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};  // Utc for UTC times
 use uuid::Uuid;  // Import the Uuid type
@@ -12,16 +14,44 @@ pub struct Book{
     pub date_published: Option<DateTime<Utc>>,
 }
 
-impl Book {
-    pub fn new(id: Uuid, title: String, author: String, genre: String, description: Option<String>, rating: Option<f64>, date_published: Option<DateTime<Utc>>) -> Self {
-        Book {
-            id,  // Automatically generate a new UUID
-            title,
-            author,
-            genre,
-            description,
-            rating,
-            date_published
-        }
+#[derive(Debug, Serialize, Deserialize)]
+
+pub struct CreateBookRequest{
+    pub title: String,
+    pub author: String,
+    pub genre: String,
+    pub description: Option<String>,
+    pub rating: Option<f64>,
+    pub date_published: Option<DateTime<Utc>>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+
+pub struct UpdateBookRequest{
+    pub title: Option<String>,
+    pub author: Option<String>,
+    pub genre: Option<String>,
+    pub description: Option<String>,
+    pub rating: Option<f64>,
+    pub date_published: Option<DateTime<Utc>>,
+}
+
+
+impl fmt::Display for Book{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "({}, {}, {}, {}, {:?}, {:?}, {:?})", self.id, self.title, self.author, self.genre, self.description, self.rating, self.date_published)
+    }
+}
+
+
+impl fmt::Display for CreateBookRequest{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "({}, {}, {}, {:?}, {:?}, {:?})", self.title, self.author, self.genre, self.description, self.rating, self.date_published)
+    }
+}
+
+impl fmt::Display for UpdateBookRequest{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "({:?}, {:?}, {:?}, {:?}, {:?}, {:?})", self.title, self.author, self.genre, self.description, self.rating, self.date_published)
     }
 }

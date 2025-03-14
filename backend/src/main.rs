@@ -5,12 +5,11 @@ mod service;
 mod repository;
 mod model;
 
-use controller::book_controller::BookController;
-
+use controller::book_controller::{get_book_by_id, list_books, delete_book_by_id, update_book_by_id, create_book};
 use service::book_service::BookService;
 use repository::book_repository::BookRepository;
 use log::info;
-use actix_web::{ App, HttpServer, HttpResponse, Responder, get};
+use actix_web::{ App, HttpServer, HttpResponse, Responder, get, web};
 use env_logger;
 use sqlx::PgPool;
 
@@ -34,9 +33,16 @@ async fn main() -> Result<(), std::io::Error> {
 
         let book_repository = BookRepository::new(pool);
         let book_service = BookService::new(book_repository);
-        let _book_controller = BookController::new(book_service);
         // Start the Actix Web server
-        HttpServer::new(|| App::new().service(health_check))
+        HttpServer::new(move || App::new().app_data(web::Data::new(book_service.clone()))
+            .service(health_check)
+            .service(get_book_by_id)
+            .service(create_book)
+            .service(update_book_by_id)
+            .service(delete_book_by_id)
+            .service(list_books)
+
+        )
         .bind("0.0.0.0:5000")?
         .run()
         .await

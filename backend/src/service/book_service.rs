@@ -21,12 +21,13 @@ impl Service for BookService{
 use crate::repository::book_repository::BookRepository;
 
 
+#[derive(Clone)]
 pub struct BookService{
-    _repository: BookRepository
+    repository: BookRepository
 }
 
 impl BookService{
     pub fn new(repository: BookRepository) -> Self{
-        BookService{_repository: repository}
+        BookService{repository}
     }
 }

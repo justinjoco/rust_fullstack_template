@@ -23,8 +23,9 @@ use uuid::Uuid;
 use sqlx::{PgPool, query, Row};
 use crate::model::book::Book;
 
+#[derive(Clone)]
 pub struct BookRepository{
-    pool: PgPool, // The pool manages lifetime for us
+    pool: PgPool, 
 }
 
 impl BookRepository{
