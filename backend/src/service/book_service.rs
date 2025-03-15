@@ -1,8 +1,8 @@
 use crate::repository::book_repository::BookRepository;
 use crate::model::book::{ Book, CreateBookRequest, UpdateBookRequest};
 use uuid::Uuid;
-use sqlx::Error;
 
+use std::error::Error;
 #[derive(Clone)]
 pub struct BookService{
     repository: BookRepository
@@ -13,19 +13,19 @@ impl BookService{
         BookService{repository}
     }
 
-    pub async fn list_books(&self) -> Result<Vec<Book>, Error> {
+    pub async fn list_books(&self) -> Result<Vec<Book>, Box <dyn Error>> {
         self.repository.list_books().await
     }
 
-    pub async fn get_book_by_id(&self, id: Uuid) -> Result<Book, Error>  {
+    pub async fn get_book_by_id(&self, id: Uuid) -> Result<Book, Box <dyn Error>>  {
         self.repository.get_book_by_id(id).await
     }
 
-    pub async fn delete_book_by_id(&self, id: Uuid) -> Result<bool, Error>  {
+    pub async fn delete_book_by_id(&self, id: Uuid) -> Result<bool, Box <dyn Error>>  {
         self.repository.delete_book_by_id(id).await
     }
 
-    pub async fn create_book(&self, request: CreateBookRequest) -> Result<Book, Error>  {
+    pub async fn create_book(&self, request: CreateBookRequest) -> Result<Book, Box <dyn Error>>  {
         let book = Book{
             id : Uuid::new_v4(),
             title : request.title,
@@ -38,7 +38,7 @@ impl BookService{
         self.repository.save(book).await
     }
 
-    pub async fn update_book_by_id(&self, id: Uuid, request: UpdateBookRequest) -> Result<Book, Error> {
+    pub async fn update_book_by_id(&self, id: Uuid, request: UpdateBookRequest) -> Result<Book, Box <dyn Error>> {
         let existing_book = self.repository.get_book_by_id(id).await?;
  
         let book = Self::merge_books(existing_book, request);

@@ -6,7 +6,7 @@ use chrono::{DateTime, Utc};  // Utc for UTC times
 use uuid::Uuid;  // Import the Uuid type
 use rust_decimal::Decimal;
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize, FromRow, Clone)]
 pub struct Book{
     pub id: Uuid,
     pub title: String,

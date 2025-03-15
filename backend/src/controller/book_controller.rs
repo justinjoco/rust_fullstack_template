@@ -1,7 +1,7 @@
 use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
 use log::info;
 use uuid::Uuid;
-use sqlx::Error;
+use std::error::Error;
 
 use crate::{model::book::{ Book, CreateBookRequest, UpdateBookRequest}, service::book_service::BookService};
 
@@ -10,7 +10,7 @@ use crate::{model::book::{ Book, CreateBookRequest, UpdateBookRequest}, service:
 pub async fn get_book_by_id(path: web::Path<Uuid>, state: web::Data<BookService>) -> impl Responder{
     let id = path.into_inner();
     info!("Book by id: {}", id);
-    let result: Result<Book, Error> = state.get_ref().get_book_by_id(id).await;
+    let result: Result<Book, Box <dyn Error>> = state.get_ref().get_book_by_id(id).await;
     match result {
         Ok(val) =>   HttpResponse::Ok().json(val),
         Err(e) => HttpResponse::NotFound().json(e.to_string()),
@@ -22,7 +22,7 @@ pub async fn get_book_by_id(path: web::Path<Uuid>, state: web::Data<BookService>
 #[get("/books")]
 pub async fn list_books(state: web::Data<BookService>) -> impl Responder{
     info!("List all books");
-    let result: Result<Vec<Book>, Error> = state.get_ref().list_books().await;
+    let result: Result<Vec<Book>, Box <dyn Error>> = state.get_ref().list_books().await;
     match result {
         Ok(val) =>   HttpResponse::Ok().json(val),
         Err(e) => HttpResponse::InternalServerError().json(e.to_string()),
@@ -33,7 +33,7 @@ pub async fn list_books(state: web::Data<BookService>) -> impl Responder{
 #[post("/book")]
 pub async fn create_book(data: web::Json<CreateBookRequest>, state: web::Data<BookService>) -> impl Responder{
     info!("Create book: {}", data);
-    let result: Result<Book, Error>  = state.get_ref().create_book(data.into_inner()).await;
+    let result: Result<Book, Box <dyn Error>>  = state.get_ref().create_book(data.into_inner()).await;
     match result {
         Ok(val) =>   HttpResponse::Ok().json(val),
         Err(e) => HttpResponse::InternalServerError().json(e.to_string()),
@@ -45,7 +45,7 @@ pub async fn create_book(data: web::Json<CreateBookRequest>, state: web::Data<Bo
 pub async fn update_book_by_id(path: web::Path<Uuid>, data: web::Json<UpdateBookRequest>, state: web::Data<BookService>) -> impl Responder{
     let id = path.into_inner();
     info!("Update book by id: {}; update = {}", id, data);
-    let result: Result<Book, Error>  = state.get_ref().update_book_by_id(id, data.into_inner()).await;
+    let result: Result<Book, Box <dyn Error>>  = state.get_ref().update_book_by_id(id, data.into_inner()).await;
     match result {
         Ok(val) =>   HttpResponse::Ok().json(val),
         Err(e) => HttpResponse::NotFound().json(e.to_string()),
@@ -57,7 +57,7 @@ pub async fn update_book_by_id(path: web::Path<Uuid>, data: web::Json<UpdateBook
 pub async fn delete_book_by_id(path: web::Path<Uuid>, state: web::Data<BookService>) -> impl Responder{
     let id = path.into_inner();
     info!("Delete book by id:  {}", id);
-    let result : Result<bool, Error>  = state.get_ref().delete_book_by_id(id).await;
+    let result : Result<bool, Box <dyn Error>>  = state.get_ref().delete_book_by_id(id).await;
     match result {
         Ok(val) =>   HttpResponse::Ok().json(val),
         Err(e) => HttpResponse::NotFound().json(e.to_string()),

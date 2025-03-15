@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 mod controller;
 mod service;
 mod repository;
@@ -36,6 +34,7 @@ pub async fn establish_redis_connection(redis_url: &str) -> Result<Pool<RedisCon
     Ok(pool)
 }
 
+
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
         env_logger::init();
@@ -47,6 +46,9 @@ async fn main() -> Result<(), std::io::Error> {
         let redis_pool = establish_redis_connection(redis_url).await.expect("bad redis connection");
 
         let book_repository = BookRepository::new(sql_pool, redis_pool);
+        let _ : () = book_repository.seed_redis_cache().await.expect("could not seed");
+
+
         let book_service = BookService::new(book_repository);
         // Start the Actix Web server
         HttpServer::new(move || App::new()
