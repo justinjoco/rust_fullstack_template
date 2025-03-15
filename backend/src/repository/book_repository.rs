@@ -1,15 +1,18 @@
 use uuid::Uuid;
 use sqlx::{PgPool, query, query_as};
 use crate::model::book::Book;
+use r2d2::Pool;
+use r2d2_redis::RedisConnectionManager;
 
 #[derive(Clone)]
 pub struct BookRepository{
-    pool: PgPool, 
+    sql_pool: PgPool, 
+    redis_pool: Pool<RedisConnectionManager>
 }
 
 impl BookRepository{
-    pub fn new(  pool: PgPool  ) -> Self{
-        BookRepository{pool: pool}
+    pub fn new(  sql_pool: PgPool, redis_pool: Pool<RedisConnectionManager>  ) -> Self{
+        BookRepository{sql_pool, redis_pool}
     }
 
    
@@ -18,7 +21,7 @@ impl BookRepository{
     
         let book = query_as::<_,Book>(query_stmt)
             .bind(book_id)
-            .fetch_one(&self.pool)
+            .fetch_one(&self.sql_pool)
             .await?;
   
 
@@ -29,7 +32,7 @@ impl BookRepository{
         let query_stmt = "SELECT * FROM book";
     
         let books = query_as::<_, Book>(query_stmt)
-            .fetch_all(&self.pool)
+            .fetch_all(&self.sql_pool)
             .await?;
   
 
@@ -39,7 +42,7 @@ impl BookRepository{
     
     pub async fn delete_book_by_id(&self, id: Uuid) -> Result<bool,  sqlx::Error>{
         let query_stmt = "DELETE FROM book WHERE id = $1";
-        let result = query(query_stmt).bind(id).execute(&self.pool).await?;
+        let result = query(query_stmt).bind(id).execute(&self.sql_pool).await?;
         Ok(result.rows_affected() > 0)
     }
 
@@ -60,7 +63,7 @@ impl BookRepository{
             .bind(new_book.description)
             .bind(new_book.rating)
             .bind(new_book.date_published)
-            .fetch_one(&self.pool).await?;
+            .fetch_one(&self.sql_pool).await?;
         Ok(book)
     }
 

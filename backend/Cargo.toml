@@ -13,11 +13,13 @@ env_logger = "0.9"         # Logging support (optional, useful for logging)
 sqlx = { version = "0.8.3", features = ["postgres", "runtime-tokio-native-tls", "uuid", "chrono", "rust_decimal" ] }
 dotenv = "0.15"            # For loading environment variables from a `.env` file (optional)
 log = "0.4"
-redis = { version = "0.25", features = ["tokio-comp"] }
+redis = { version = "0.29.1", features = ["tokio-comp", "uuid", "rust_decimal", "connection-manager", "json", "r2d2"] }
 chrono = { version = "0.4", features = ["serde"]}
 uuid = { version = "1.0", features = ["v4", "serde"] }
 rust_decimal = "1.25.0"
 actix-cors = "0.6"  # or the latest version
+r2d2 = "0.8.10"
+r2d2_redis = "0.14.0" 
 
 [[bin]]
 name = "app"  # Custom binary name

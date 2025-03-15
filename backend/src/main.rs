@@ -13,15 +13,26 @@ use actix_web::{ App, HttpServer, HttpResponse, Responder, get, web};
 use env_logger;
 use sqlx::PgPool;
 use actix_cors::Cors;
-
+use r2d2_redis::RedisConnectionManager;
+use r2d2::{Error, Pool};
 #[get("/health_check")]
 async fn health_check() -> impl Responder{
     info!("Health check ping");
     HttpResponse::Ok()
 }
 
-pub async fn establish_connection(database_url: &str) -> Result<PgPool, sqlx::Error> {
+pub async fn establish_db_connection(database_url: &str) -> Result<PgPool, sqlx::Error> {
     let pool = PgPool::connect(database_url).await?;
+    info!("Postgres connection success!");
+    Ok(pool)
+}
+
+pub async fn establish_redis_connection(redis_url: &str) -> Result<Pool<RedisConnectionManager>, Error> {
+    let manager = RedisConnectionManager::new(redis_url).unwrap();
+    let pool = Pool::builder()
+        .max_size(5)
+        .build(manager)?;
+    info!("Redis connection success!");
     Ok(pool)
 }
 
@@ -30,9 +41,12 @@ async fn main() -> Result<(), std::io::Error> {
         env_logger::init();
 
         let database_url = "postgres://admin:password@postgres:5432/app_db";
-        let pool = establish_connection(database_url).await.expect("bad postgres connection");
+        let redis_url = "redis://default:mypassword@cache:6379/0";
 
-        let book_repository = BookRepository::new(pool);
+        let sql_pool = establish_db_connection(database_url).await.expect("bad postgres connection");
+        let redis_pool = establish_redis_connection(redis_url).await.expect("bad redis connection");
+
+        let book_repository = BookRepository::new(sql_pool, redis_pool);
         let book_service = BookService::new(book_repository);
         // Start the Actix Web server
         HttpServer::new(move || App::new()
