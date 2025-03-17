@@ -13,6 +13,9 @@ use sqlx::PgPool;
 use actix_cors::Cors;
 use r2d2_redis::RedisConnectionManager;
 use r2d2::{Error, Pool};
+use std::env;
+use dotenv::dotenv;
+
 #[get("/health_check")]
 async fn health_check() -> impl Responder{
     info!("Health check ping");
@@ -38,12 +41,13 @@ pub async fn establish_redis_connection(redis_url: &str) -> Result<Pool<RedisCon
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
         env_logger::init();
+        dotenv().ok();
 
-        let database_url = "postgres://admin:password@postgres:5432/app_db";
-        let redis_url = "redis://default:mypassword@cache:6379/0";
+        let database_url = env::var("DATABASE_URL").expect("Cannot read database url");
+        let redis_url =  env::var("REDIS_URL").expect("Cannot read Redis url");
 
-        let sql_pool = establish_db_connection(database_url).await.expect("bad postgres connection");
-        let redis_pool = establish_redis_connection(redis_url).await.expect("bad redis connection");
+        let sql_pool = establish_db_connection(&database_url).await.expect("bad postgres connection");
+        let redis_pool = establish_redis_connection(&redis_url).await.expect("bad redis connection");
 
         let book_repository = BookRepository::new(sql_pool, redis_pool);
         let _ : () = book_repository.seed_redis_cache().await.expect("could not seed");

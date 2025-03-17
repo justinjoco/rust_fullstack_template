@@ -7,5 +7,5 @@ done
 
 echo "PostgreSQL started"
 
-sqlx migrate run --database-url "postgres://admin:password@postgres:5432/app_db"
+sqlx migrate run --database-url $DATABASE_URL
 exec /bin/app
