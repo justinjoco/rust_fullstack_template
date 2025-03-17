@@ -1,3 +1,4 @@
+-- Add migration script here
 CREATE TABLE IF NOT EXISTS book (
     id UUID PRIMARY KEY,
     title TEXT NOT NULL,
